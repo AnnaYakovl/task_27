@@ -1,0 +1,40 @@
+
+html,
+body {
+  margin: 0 auto;
+  padding: 0 !important;
+  box-sizing: border-box;
+  font-size: 1rem;
+  max-width: 1920px;
+  min-width: 320px;
+}
+
+.container{
+    width: 1920px;       
+    padding: 0;
+}
+
+.container {
+   padding: 0;
+}
+
+h1,
+h2,
+p,
+.button {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;  
+}
+
+.h1, h1 {
+    font-size: 2rem;
+}
+
+.h2, h2 {
+    font-size: 1rem;
+}
+
+#deleteImg{
+  position: absolute; 
+  z-index: 10; 
+  top:10px; left:10px; 
+}
