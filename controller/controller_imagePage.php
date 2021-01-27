@@ -40,7 +40,7 @@ class controller_imagePage extends Controller
             {
                 $this->commentsList = $this->createCommentsSet($commentsFile);
             }
-            $this->view->generate('imagePage.php', $this->authorised, $this->commentsList, $_GET['fileName']);
+            $this->view->generate('imagePage.php', $this->checkAdmin(), $this->authorised, $this->commentsList, $_GET['fileName']);
         }
         else
         {
@@ -49,12 +49,12 @@ class controller_imagePage extends Controller
     }
 
     function createComment(){
-        if (!empty($_POST['comment']) && $this->checkAuth())
+        if (!empty($_POST['comment']) && ($this->checkAuth() || $this->checkAdmin()))
         {
             if(!empty($_GET['fileName']))
             {
                 $commentFileName = str_replace("jpg", "txt", $_GET['fileName']);
-                $commentsFile = COMMENT_DIR.'/'.$commentFileName; 
+                $commentsFile = COMMENT_DIR.'/'.$commentFileName;
                 $newComment = $this->model->addComment($commentsFile, $_POST['comment']);
                 if($newComment)
                 {
@@ -74,7 +74,7 @@ class controller_imagePage extends Controller
 
     function deleteComment()
     {
-        if (!empty($_POST['commentToDelete']) && $this->checkAuth())   
+        if (!empty($_POST['commentToDelete']) && $this->checkAdmin())   
         {
             if(!empty($_GET['fileName']))
             {
@@ -99,5 +99,18 @@ class controller_imagePage extends Controller
 		else {
 			return true;
 		}
+    }
+    
+    function checkAdmin()
+	{
+		$bIsAdmin = false;
+
+		$result = $this->model->checkUser();
+		if($result === "admin")
+		{
+			$bIsAdmin = true;
+		}
+		
+		return $bIsAdmin;
 	}
 }

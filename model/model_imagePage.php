@@ -32,47 +32,79 @@ class model_imagePage extends Model
             else {
                 echo $errors[] = 'Комментарий не найден';
             }
+
+            $this->deleteCommentFromDataBase($deletedComment);
         }
         else {
             print 'Файл не найден';
         }
     }
 
+    function deleteCommentFromDataBase($comment)
+    {
+        $bSuccess = false;
+
+        $sql = "delete from comments where comment_text= '" .$comment."';";
+        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $result =  $dateBase ->exec($sql); 
+        if($result)
+        {
+            $bSuccess = true;
+        }
+         
+        return $bSuccess; 
+    }
+
+    function addCommentToDataBase($userLogin, $imageName, $comment)
+    {
+        $bSuccess = false;
+
+        $sql = "insert into comments(user_login, image_name, comment_text) 
+        values ('".$userLogin."', '".$imageName."', '".$comment."');"; 
+        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $result =  $dateBase ->exec($sql); 
+        if($result)
+        {
+            $bSuccess = true;
+        }
+
+        return $bSuccess; 
+    }
+
     function addComment($commentsFile, $comment)
     {
         setlocale(LC_TIME, 'ru-Latn');
+        $bCommentAdded = false;
         
         //if empty comment
-        if($comment !== '') {
+        if($comment !== '')
+        {
+            //delete line breaks
+            $arrayToReplace = array("\r\n","\r","\n","\\r","\\n","\\r\\n");
+            $comment = str_replace($arrayToReplace, "", $comment);
+            $commentText = $comment;
+            $user_name = $this->checkUser();
 
-            $user_id = $this->checkUser();
-            if(strlen($user_id)>0)
+            if (is_null($user_name))
             {
-                $user_name = $this->GetUserName($user_id);
-
-                //delete line breaks
-                $arrayToReplace = array("\r\n","\r","\n","\\r","\\n","\\r\\n");
-                $comment = str_replace($arrayToReplace, "", $comment);
-                if(is_null($user_name))
-                {
-                    $comment =  date("D M j G:i:s T Y").":"." Без имени ".$comment;
-                    $comment = trim($comment);
-                }
-                else
-                {
-                    $comment =  date("D M j G:i:s T Y").":".$user_name.$comment;
-                }
-
-                //add comment
-                file_put_contents($commentsFile,$comment."\n",FILE_APPEND);                   
-                return true;
+                $comment =  date("D M j G:i:s T Y").":"." Без имени ".$comment;
+                $comment = trim($comment);
             }
             else
             {
-                return false;
+                 $comment =  date("D M j G:i:s T Y").":".$user_name. " " .$comment;
             }
-        }                         
-    }
+
+            //add comment
+            file_put_contents($commentsFile,$comment."\n",FILE_APPEND);
+
+            $imageName = $_GET['fileName'];            
+            $this->addCommentToDataBase($user_name, $imageName, $commentText);
+            $bCommentAdded =  true;
+        }
+        
+        return $bCommentAdded;
+    }                   
 
     // проверяем, залогинен ли пользователь
 	public function checkUser()
@@ -114,7 +146,7 @@ class model_imagePage extends Model
     public function getUserName(string $UserName)
 	{
         $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
-        $sql = "select user_login from users where user_id= '".$UserName."' LIMIT 1";
+        $sql = "select user_login from users where user_login= '".$UserName."' LIMIT 1";
 		$createResult = $dateBase->prepare($sql); 
         $createResult->execute();
 		$userdata  = $createResult->FETCH(PDO::FETCH_NUM);    

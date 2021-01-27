@@ -19,27 +19,30 @@
                     <a href="<?php echo URL."?page=5&fileName=".$file;?>" title="Перейти к изображению">
                         <img src="<?php echo URL.UPLOAD_DIR. '/' .$file;?>" class="img-thumbnail" alt="<?php echo URL.UPLOAD_DIR. '/' .$file;?>">
                     </a>
+                    <?php if ($bIsAdmin): ?>
                     <form method="POST">
                         <input type="hidden" name="name" value="<?php echo $file; ?>">
                         <button type="submit" class="close" aria-label="Удалить" id="deleteImg">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </form>
+                    <?php endif; ?>
                 </div> 
             <?php endforeach; ?>
         <?php endif;?>            
     </div>
-    <div class="row addFileForm">
-        <div class="col-12"><hr>
-            <div class="row justify-content-center">
-                <div class="col-12">
-                <form method="POST" enctype="multipart/form-data">
-                    Загрузите вашу картинку: <br /><input name="files[]" type="file">
-                    <input name="submit" type="submit" value="Загрузить" />
-                </form>
-                </div>               
-            </div>    
-            <hr>
-        </div>            
-    </div>
+    <?php if($authorised):?>
+        <div class="row addFileForm">
+            <div class="col-12"><hr>
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                    <form method="POST" enctype="multipart/form-data">
+                        Загрузите вашу картинку: <br /><input name="files[]" type="file">
+                        <input name="submit" type="submit" value="Загрузить" />
+                    </form>
+                    </div>               
+                </div>    
+            </div>            
+        </div>
+    <?php endif;?>  
 </div>

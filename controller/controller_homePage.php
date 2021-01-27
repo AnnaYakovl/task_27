@@ -11,7 +11,7 @@ class controller_homePage extends Controller
 		$this->fileList = array_filter($this->fileList, function ($file) {
             return !in_array($file, ['.', '..', '.gitkeep']);});
             
-		$this->view->generate('mainPage.php', $this->checkAuth(), $this->fileList);
+		$this->view->generate('mainPage.php', $this->checkAdmin(), $this->checkAuth(), $this->fileList);
 	}
 
 	function checkAuth()
@@ -24,6 +24,19 @@ class controller_homePage extends Controller
 		else {
 			return true;
 		}
+	}
+
+	function checkAdmin()
+	{
+		$bIsAdmin = false;
+
+		$result = $this->model->checkUser();
+		if($result === "admin")
+		{
+			$bIsAdmin = true;
+		}
+		
+		return $bIsAdmin;
 	}
 
 	function uploadfile()
@@ -52,8 +65,13 @@ class controller_homePage extends Controller
 					if (!move_uploaded_file($uploadedName, $fileDir)) {
 						$errors[] = 'Ошибка загрузки файла ' . $fileName;
 						continue;
-					}          
-				};
+					}
+					
+					//add data to data base
+					$user_login = $this->model->checkUser();
+					$this->model->addImageToDataBase($file['name'][0], $user_login);
+
+				};				
 
 				if (empty($errors)) {
 					print 'Файлы были загружены'.'</br>';
@@ -96,6 +114,10 @@ class controller_homePage extends Controller
 				else { 
 					$errors[] = 'Файл c комментариями не найден '.$commentsFile;
 				}
+				
+				//delete data from data base
+				$this->model->deleteImageFromDataBase($_POST['name']);
+				$this->model->deleteAllCommentsFromDataBase($_POST['name']);
 			
 				foreach($errors as $error)
 				{

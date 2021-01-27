@@ -24,9 +24,11 @@
                                 <form method="POST">
                                     <div>
                                         <textarea name ="commentToDelete"><?php echo $string;?> </textarea>
-                                        <button type = "submit" class = "close" aria-label = "Удалить" id = "deleteComment">
-                                        <span aria-hidden="true">&times;</span>
-                                        </button>
+                                        <?php if ($bIsAdmin):?> 
+                                            <button type = "submit" class = "close" aria-label = "Удалить" id = "deleteComment">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        <?php endif; ?>
                                     </div>
                                 </form>   
                             </li>    
@@ -35,15 +37,17 @@
                 <?php endif;?>        
             <div>
         </div>
-        <div class="row comment form">
-            <div class="col-md-12">
-                <form method="POST">
-                    <div class="form-group">
-                        <textarea class="form-control" id="FormControlTextarea" rows="3" name="comment"></textarea>
-                    </div>
-                    <input name="submit" type="submit" value="Комментировать">
-                </form>
-            </div>
-        <div> 
+        <?php if($authorised):?> 
+            <div class="row comment form">
+                <div class="col-md-12">
+                    <form method="POST">
+                        <div class="form-group">
+                            <textarea class="form-control" id="FormControlTextarea" rows="3" name="comment"></textarea>
+                        </div>
+                        <input name="submit" type="submit" value="Комментировать">
+                    </form>
+                </div>
+            <div>
+        <?php endif;?>  
     </div>
 </div>

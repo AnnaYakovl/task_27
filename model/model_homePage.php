@@ -36,5 +36,21 @@ class model_homePage extends Model
 
 			return null;
 		}
-	}	
+	}
+
+	function deleteAllCommentsFromDataBase($image_name)
+    {
+        $bSuccess = false;
+
+        $sql = "delete from comments where image_name= '" .$image_name."';";
+        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $result =  $dateBase ->exec($sql); 
+        if($result)
+        {
+            $bSuccess = true;
+        }
+         
+        return $bSuccess; 
+    }
+
 }
