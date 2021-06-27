@@ -45,7 +45,7 @@ class model_imagePage extends Model
         $bSuccess = false;
 
         $sql = "delete from comments where comment_text= '" .$comment."';";
-        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $dateBase = getDataBase();
         $result =  $dateBase ->exec($sql); 
         if($result)
         {
@@ -61,7 +61,7 @@ class model_imagePage extends Model
 
         $sql = "insert into comments(user_login, image_name, comment_text) 
         values ('".$userLogin."', '".$imageName."', '".$comment."');"; 
-        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $dateBase = getDataBase();
         $result =  $dateBase ->exec($sql); 
         if($result)
         {
@@ -111,7 +111,7 @@ class model_imagePage extends Model
 	{
 		if(isset($_COOKIE['id']))
 		{
-            $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+            $dateBase = getDataBase();
             $sql = "select * from users where user_id= '".intval($_COOKIE['id'])."' LIMIT 1";
 			$createResult = $dateBase->prepare($sql); 
             $createResult->execute();
@@ -145,7 +145,7 @@ class model_imagePage extends Model
     
     public function getUserName(string $UserName)
 	{
-        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $dateBase = getDataBase();
         $sql = "select user_login from users where user_login= '".$UserName."' LIMIT 1";
 		$createResult = $dateBase->prepare($sql); 
         $createResult->execute();
@@ -159,5 +159,11 @@ class model_imagePage extends Model
 		{
 			return null;
 		}	
-	}	
+	}
+
+    function getDataBase()
+	{
+		$dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+		return $dateBase;
+	}
 }

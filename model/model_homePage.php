@@ -6,7 +6,7 @@ class model_homePage extends Model
 	{
 		if(isset($_COOKIE['id']))
 		{
-            $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+            $dateBase = getDataBase();
             $sql = "select * from users where user_id= '".intval($_COOKIE['id'])."' LIMIT 1";
 			$createResult = $dateBase->prepare($sql); 
             $createResult->execute();
@@ -43,7 +43,7 @@ class model_homePage extends Model
         $bSuccess = false;
 
         $sql = "delete from comments where image_name= '" .$image_name."';";
-        $dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+        $dateBase = getDataBase();
         $result =  $dateBase ->exec($sql); 
         if($result)
         {
@@ -52,5 +52,11 @@ class model_homePage extends Model
          
         return $bSuccess; 
     }
+
+	function getDataBase()
+	{
+		$dateBase = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+		return $dateBase;
+	}
 
 }

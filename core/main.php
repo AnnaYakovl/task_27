@@ -1,38 +1,20 @@
 <?php
+
+	$pages = ['homePage', 'registrationPage', 'loginPage', 'logoutPage','imagePage','404'];
+
 class Main {
 
     static function showPage()
     {
 
-		$pageNumber = '1';
+		$pageNumber = '0';
 
 		if (!empty($_GET['page'])) 
 		{     
 				$pageNumber = (int) $_GET['page'];     
 		}
 		
-		$page_name;
-		
-		switch ($pageNumber) {
-			case '1':
-				$page_name = 'homePage';
-				break;
-			case '2':
-				$page_name = 'registrationPage';
-				break;
-			case '3':
-				$page_name = 'loginPage';
-				break;
-			case '4':
-				$page_name = 'logoutPage';
-				break;
-			case '5':
-				$page_name = 'imagePage';
-				break;
-			default:
-				$page_name = '404';
-				break;
-		}
+		$page_name = $pages[$pageNumber - 1];
 		
 		$controller_file = strtolower($page_name);
 		$controller_name = "controller_".$page_name;
